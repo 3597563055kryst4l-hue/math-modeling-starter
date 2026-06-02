@@ -1,0 +1,16 @@
+# 比赛参数配置模板
+# 赛时按需修改，通过 templates.config_loader 加载
+
+problem:
+  name: ''
+  description: ''
+
+data:
+  raw_dir: 'data/raw'
+  processed_dir: 'data/processed'
+
+model:
+  random_seed: 42
+
+sensitivity:
+  param_ranges: {}

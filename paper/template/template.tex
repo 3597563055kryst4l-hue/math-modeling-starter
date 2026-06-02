@@ -1,0 +1,181 @@
+% 数学建模竞赛论文 LaTeX 模板
+% 使用 xelatex 编译: xelatex paper.tex
+
+\documentclass[12pt,a4paper]{article}
+
+% ---- 中文支持 ----
+\usepackage{ctex}
+
+% ---- 页面设置 ----
+\usepackage[top=2.54cm, bottom=2.54cm, left=3.18cm, right=3.18cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% ---- 数学公式 ----
+\usepackage{amsmath, amssymb, amsthm}
+
+% ---- 图表 ----
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}  % 三线表
+
+% ---- 引用 ----
+\usepackage[numbers,sort&compress]{natbib}
+
+% ---- 超链接 ----
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=blue
+}
+
+% ---- 编号 ----
+\usepackage{chngcntr}
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
+\counterwithin{equation}{section}
+
+% ---- 自定义命令 ----
+\newcommand{\figref}[1]{图~\ref{#1}}
+\newcommand{\tabref}[1]{表~\ref{#1}}
+\newcommand{\eqref}[1]{式~(\ref{#1})}
+
+% ============================================================
+\begin{document}
+
+% ---- 标题 ----
+\begin{center}
+    \LARGE\textbf{数学建模竞赛论文}\\
+    \vspace{0.5cm}
+    \large 参赛编号: XXXXX\\
+    \vspace{0.5cm}
+\end{center}
+
+% ---- 摘要 ----
+\begin{abstract}
+\noindent 在此填写摘要内容。摘要应包含：问题概述、方法概述、主要结果。
+
+\noindent\textbf{关键词}：关键词1；关键词2；关键词3
+\end{abstract}
+
+\thispagestyle{empty}
+\newpage
+
+% ---- 目录 ----
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{问题重述与分析}
+\label{sec:intro}
+
+\subsection{问题重述}
+\label{sec:restate}
+
+在此重述题目要求\cite{ref1}。
+
+\subsection{问题分析}
+\label{sec:analysis}
+
+在此分析解题思路。
+
+% ============================================================
+\section{模型假设}
+\label{sec:assumptions}
+
+\begin{enumerate}
+    \item 假设一：\ldots
+    \item 假设二：\ldots
+    \item 假设三：\ldots
+\end{enumerate}
+
+% ============================================================
+\section{符号说明}
+\label{sec:notation}
+
+\begin{table}[htbp]
+    \centering
+    \caption{主要符号说明}
+    \begin{tabular}{ccc}
+        \toprule
+        符号 & 含义 & 单位 \\
+        \midrule
+        $x$ & \ldots & - \\
+        $y$ & \ldots & - \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+% ============================================================
+\section{模型建立与求解}
+\label{sec:model}
+
+\subsection{问题一模型}
+\label{sec:prob1}
+
+在这里建立数学模型：
+
+\begin{equation}
+    \label{eq:model}
+    \min f(x) = \sum_{i=1}^{n} c_i x_i
+\end{equation}
+
+约束条件：
+\begin{align}
+    \sum_{i=1}^{n} a_{ij} x_i &\leq b_j, \quad j = 1,\ldots,m \\
+    x_i &\geq 0, \quad i = 1,\ldots,n
+\end{align}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figures/fig1_功率曲线.png}
+    \caption{功率曲线}
+    \label{fig:power}
+\end{figure}
+
+\subsection{问题二模型}
+\label{sec:prob2}
+
+\ldots
+
+% ============================================================
+\section{模型检验与灵敏度分析}
+\label{sec:validation}
+
+\subsection{模型检验}
+\label{sec:verify}
+
+\subsection{灵敏度分析}
+\label{sec:sensitivity}
+
+% ============================================================
+\section{模型的优缺点与改进方向}
+\label{sec:discussion}
+
+\subsection{模型优点}
+\begin{itemize}
+    \item 优点一
+    \item 优点二
+\end{itemize}
+
+\subsection{模型缺点}
+\begin{itemize}
+    \item 缺点一
+    \item 缺点二
+\end{itemize}
+
+\subsection{改进方向}
+\begin{itemize}
+    \item 改进方向一
+    \item 改进方向二
+\end{itemize}
+
+% ============================================================
+\begin{thebibliography}{99}
+\bibitem{ref1} 作者. 标题[J]. 期刊, 年份, 卷(期): 页码.
+\end{thebibliography}
+
+\end{document}

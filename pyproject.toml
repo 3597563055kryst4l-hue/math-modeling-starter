@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "math-modeling-starter"
+version = "0.1.0"
+description = "数学建模竞赛工作环境 — 让 AI agent 帮你打比赛"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "scipy",
+    "scikit-learn",
+    "pulp",
+    "openpyxl",
+    "python-docx",
+    "pyyaml",
+]

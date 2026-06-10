@@ -2,25 +2,21 @@ import subprocess
 import sys
 import os
 
-BASE = os.path.dirname(os.path.abspath(__file__))
+REQUIREMENTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'requirements.txt')
 
-DEPS_CORE = [
-    'numpy', 'pandas', 'matplotlib', 'scipy', 'scikit-learn',
-    'pulp', 'openpyxl', 'python-docx', 'pyyaml',
-]
-
-DEPS_OPTIONAL = [
+OPTIONAL_PACKAGES = [
     'xgboost', 'lightgbm', 'torch', 'statsmodels', 'pmdarima',
 ]
 
 def main():
     print('Installing core dependencies...')
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', *DEPS_CORE])
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', REQUIREMENTS])
 
     answer = input('Install optional packages (xgboost, lightgbm, torch, etc.)? [y/N]: ')
     if answer.lower() == 'y':
-        subprocess.check_call([sys.executable, '-m', 'pip', 'install', *DEPS_OPTIONAL])
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', *OPTIONAL_PACKAGES])
 
+    BASE = os.path.dirname(os.path.abspath(__file__))
     for d in ['data/raw', 'data/processed', 'data/external',
               'logs', 'paper/figures']:
         os.makedirs(os.path.join(BASE, d), exist_ok=True)

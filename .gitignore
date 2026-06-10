@@ -19,3 +19,20 @@ Thumbs.db
 # Temp
 *.tmp
 temp_*.txt
+
+# Data files（比赛数据，不进版本控制）
+data/raw/*
+!data/raw/README.md
+data/processed/*
+!data/processed/README.md
+data/external/*
+
+# Generated output
+problems/*
+!problems/README.md
+logs/*
+!logs/README.md
+
+# Paper drafts & figures
+paper/figures/
+paper/draft.md

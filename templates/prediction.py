@@ -47,6 +47,22 @@ def train_arima(train_data, test_len, order=(1, 1, 1)):
 
 
 def train_lstm(data, seq_len=24, epochs=50):
+    """LSTM 时间序列预测参考实现。
+
+    返回 (y_pred, y_true, model, scaler)，其中 y_pred/y_true 是逆变换后的原始尺度值。
+    使用方式：
+        pred, actual, model, scaler = train_lstm(data)
+        # 预测未来 n 步：
+        last_seq = data[-seq_len:]
+        last_scaled = scaler.transform(np.array(last_seq).reshape(-1, 1)).flatten()
+        future = []
+        for _ in range(n):
+            x = torch.FloatTensor(last_scaled[-seq_len:]).unsqueeze(0).unsqueeze(-1)
+            p = model(x).item()
+            future.append(p)
+            last_scaled = np.append(last_scaled, p)
+        future = scaler.inverse_transform(np.array(future).reshape(-1, 1))
+    """
     import torch
     import torch.nn as nn
     from sklearn.preprocessing import MinMaxScaler
@@ -59,7 +75,7 @@ def train_lstm(data, seq_len=24, epochs=50):
         X.append(data_scaled[i:i+seq_len])
         y.append(data_scaled[i+seq_len])
     X = torch.FloatTensor(np.array(X)).unsqueeze(-1)
-    y = torch.FloatTensor(np.array(y)).unsqueeze(-1)
+    y_true = torch.FloatTensor(np.array(y)).unsqueeze(-1)
 
     class LSTMModel(nn.Module):
         def __init__(self):
@@ -76,11 +92,16 @@ def train_lstm(data, seq_len=24, epochs=50):
 
     for epoch in range(epochs):
         optimizer.zero_grad()
-        loss = criterion(model(X), y)
+        loss = criterion(model(X), y_true)
         loss.backward()
         optimizer.step()
 
-    return model, scaler
+    # 训练完成后在训练集上预测，逆变换回原始尺度
+    with torch.no_grad():
+        y_pred_scaled = model(X).numpy().flatten()
+    y_pred = scaler.inverse_transform(y_pred_scaled.reshape(-1, 1)).flatten()
+    y_true_orig = scaler.inverse_transform(y_true.numpy().reshape(-1, 1)).flatten()
+    return y_pred, y_true_orig, model, scaler
 
 
 # ============================================================

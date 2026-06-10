@@ -1,16 +1,7 @@
 import matplotlib.pyplot as plt
-import matplotlib
 import numpy as np
 
-
-def set_paper_style():
-    matplotlib.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'DejaVu Sans']
-    matplotlib.rcParams['axes.unicode_minus'] = False
-    matplotlib.rcParams['figure.dpi'] = 300
-    matplotlib.rcParams['savefig.dpi'] = 300
-    matplotlib.rcParams['savefig.bbox'] = 'tight'
-    matplotlib.rcParams['axes.spines.top'] = False
-    matplotlib.rcParams['axes.spines.right'] = False
+from config.settings import set_plot_style as set_paper_style  # noqa: F401
 
 
 COLORS = ['#2E86AB', '#A23B72', '#F18F01', '#C73E1D', '#44BBA4']

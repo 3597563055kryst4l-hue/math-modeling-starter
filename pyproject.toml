@@ -1,20 +1,27 @@
 [build-system]
-requires = ["setuptools>=68.0"]
+requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.backends._legacy:_Backend"
 
 [project]
 name = "math-modeling-starter"
-version = "0.1.0"
-description = "数学建模竞赛工作环境 — 让 AI agent 帮你打比赛"
-requires-python = ">=3.9"
+version = "2.0.0"
+description = "FDE-architected math modeling contest scaffold"
+requires-python = ">=3.10"
 dependencies = [
     "numpy",
     "pandas",
     "matplotlib",
     "scipy",
     "scikit-learn",
-    "pulp",
     "openpyxl",
-    "python-docx",
     "pyyaml",
 ]
+
+[project.scripts]
+math-model = "src.run:main"
+
+[tool.setuptools.packages.find]
+include = ["src*"]
+
+[tool.setuptools.package-data]
+src = ["py.typed"]

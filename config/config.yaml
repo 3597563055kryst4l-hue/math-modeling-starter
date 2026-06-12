@@ -1,0 +1,39 @@
+# FDE Phase-Gate Configuration
+# Edit this file to control the pipeline. CLI args override YAML.
+
+contest:
+  name: "2026 MCM Problem A"
+  problem: "A"                     # A | B | C | D — applies problem template
+  phase: 0
+  output_dir: "output/default"     # Overridden by run.py with timestamp
+
+human_gate:
+  enabled: true                    # false = run all phases without pausing
+  confirm_on: [0, 1, 2, 4, 5, 6]  # phases that print gate messages
+
+data:
+  raw_path: "data/raw.csv"
+  cleaned_path: "output/default/cleaned.csv"
+  cleaning_strategy: "drop"        # drop | fill_mean | fill_median
+
+model:
+  type: "linear_regression"        # linear_regression | arima | svm | scipy_minimize | curve_fit | ttest | custom
+  params:
+    alpha: 0.01
+
+solver:
+  method: "L-BFGS-B"              # L-BFGS-B | SLSQP | RK45 | hybrid | normal_equations
+  max_iter: 1000
+
+viz:
+  format: "png"
+  dpi: 300
+  output_dir: "output/viz"
+
+report:
+  output_dir: "output/report"
+  formats: ["md", "tex"]          # md, tex, or both ["md", "tex"]
+
+logging:
+  level: "INFO"
+  output_dir: "output/logs"

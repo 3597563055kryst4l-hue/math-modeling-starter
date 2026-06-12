@@ -59,25 +59,64 @@
 
 ## 二、拆题流程
 
-### Step 4：深度分析题目
+### Step 4：深度分析题目 → 填写框架（先猜后确认）
 
-逐字逐句读题目要求，分析：
+逐字逐句读题目要求，然后**你来做结构化分析**，不要丢给用户填空题：
 
-1. **物理对象是什么** — 题目在描述什么现实场景/系统？
-2. **已知量/未知量/约束条件**
-3. **子问题分解** — 题目分几问？每问的输入输出是什么？
-4. **每问预期输出** — 数值结果？图表？方案？论文段落？
+1. 读题后，调用 `phase0_context.run(problem_text=原文, agent_guess=你的推断)` 生成框架
+2. 框架包含 6 个维度，你的推断填入 `proposed_entries`：
+   - **system_components** — 题目涉及哪些物理实体/子系统？（风电、光伏、电解槽、储能...）
+   - **decision_variables** — 要决策什么变量？（符号、单位、类型、范围）
+   - **constraints** — 受什么限制？（功率平衡、上下限、绿电比例...）
+   - **objective** — 目标是什么？（吨氨成本最小化、利润最大化...）
+   - **external_parameters** — 哪些是外部给定的？（出力曲线、电价...）
+   - **subproblems** — 分几问？每问要什么输出？
 
-将以上分析写入 `logs/YYYYMMDD_HHMM_问题拆解.md`
+3. 每个维度加上 confidence：`high` 表示你很有把握、`medium` 表示需要人确认、`low` 表示不确定
 
-### Step 5：拆题结果 → 请用户确认
+**示例输出（不用这种空格式）：**
+```
+❌ 不要空着让人填：
 
-呈现给用户，核心要确认的是：
-- 子问题划分是否合理？
-- 每问的理解是否有偏差？
-- 关键假设方向是否一致？
+decision_variables:
+  entries: []
+```
 
-**在用户确认之前，不要进入编码阶段。**
+**应该是这样的：**
+```
+✅ 你读完题后写好的：
+
+decision_variables:
+  proposed_entries:
+    - symbol: P_wind
+      description: 风电出力功率
+      units: MW
+      type: continuous
+      range: "[0, 40]"
+    - symbol: P_elec
+      description: 电解槽功率
+      units: MW
+      type: continuous
+      range: "[0, 20]"
+  confidence: high
+  note: "题目附件2给出了典型日出力曲线"
+```
+
+### Step 5：框架 → 请用户确认
+
+呈现给用户，逐项确认：
+- **系统组件** — "我猜有这些子系统，对吗？漏了什么？"
+- **决策变量** — "我猜要决策这些变量，方向对吗？"
+- **约束条件** — "我总结了这些约束，有没有漏掉重要的？"
+- **目标** — "目标是这个，确认？"
+- **外部参数** — "这些是题目给定的，我理解对吗？"
+- **子问题** — "题目的 Q1-Q5 我这样拆分，合理吗？"
+
+用户确认或修正后，框架正式确定，进入编码阶段。**在用户确认之前，不要进入编码阶段。**
+
+---
+
+## 三、执行流程
 
 ---
 
@@ -185,7 +224,19 @@ results/
 
 ---
 
-## 七、批判性思维
+## 七、src/ 使用原则（不可妥协）
+
+src/ 目录提供的是 **基础工具链，不是算法库**。它的作用是消除重复劳动（读数据、画图、出表格、交叉验证分割），不是替你选择解题方法。
+
+**三条铁则：**
+
+1. **算法选择服务于问题，不是服务于 src/。** 如果当前问题最适合的方法 src/ 里没有，直接现场写代码实现，不要退而求其次用 src/ 里有的次优方案。src/ 里只有线性回归≠你只能用线性回归。
+
+2. **可以混用。** 允许且鼓励的做法：用 src/ 做数据加载和出图，但核心求解算法自己写。例如 `phase1_data.py` 读数据 → 自定义一个 XGBoost 模型 → `phase5_viz.py` 出图 → `phase6_report.py` 出报告。src/ 的各个模块可以独立使用，不需要绑定整个流水线。
+
+3. **永远不要因为"src/ 里有现成的"而推荐一个不合适的算法。** 这是"锤子找钉子"在代码层面的具体表现形式，直接违反建模第一原则。
+
+## 八、批判性思维
 
 - 用户的假设如果不合理，直接指出来，解释为什么，给出替代方案
 - 如果某个方法不适合当前问题，说明原因，不要为了迁就用户而硬做
@@ -194,7 +245,7 @@ results/
 
 ---
 
-## 八、交叉验证
+## 九、交叉验证
 
 - 模型结果要用多种方式验证：换算法、换数据子集、用物理直觉检验
 - 对于关键数值结论（最优解、预测精度、参数敏感度），至少用两种方法独立求解对比
@@ -203,7 +254,7 @@ results/
 
 ---
 
-## 九、日志规范
+## 十、日志规范
 
 每做一个小步骤，必须写入 `logs/` 目录下的 md 文件。
 
@@ -237,7 +288,7 @@ YYYY-MM-DD HH:MM
 
 ---
 
-## 十、用户决策点（必须停下来问）
+## 十一、用户决策点（必须停下来问）
 
 以下情况**必须**停下来问用户，不能自主决定：
 
@@ -259,7 +310,7 @@ YYYY-MM-DD HH:MM
 
 ---
 
-## 十一、执行规范
+## 十二、执行规范
 
 - 每完成一小步，立即写日志（不要攒着一起写）
 - 遇到需要用户决策的点，停下来问用户
@@ -321,6 +372,44 @@ YYYY-MM-DD HH:MM
 | | `save_output(data, path)` | 自动识别格式保存（CSV/JSON/YAML） |
 | `logger` | `write_log(topic, content)` | 写 markdown 日志（给本工作流用） |
 | | `setup_logger(name, log_dir)` | 配置实时日志（控制台+文件） |
+| `batch` | `run_scenarios(solver_fn, param_grid)` | 多场景批量执行，返回结果列表 |
+| | `aggregate_scenarios(results)` | 聚合批处理结果（均值/方差/分位数） |
+| | `categorize_scenarios(agg, field, threshold)` | 三档分类（全满足/部分/不满足） |
+
+### src/（Phase 流水线）
+
+所有 Phase 模块通过 `PhaseRunner` 编排，也可单独 import 使用：
+
+| Phase | 模块 | 核心函数 | 用途 |
+|-------|------|----------|------|
+| **0 — 题意分析** | `phase0_context` | `run(problem_id)` | 输出题目结构化框架（组件/变量/约束/目标/参数），由人确认填空 |
+| **1 — 数据** | `phase1_data` | `load_raw_data(path)` | 加载 CSV / Excel / TXT |
+| | | `quick_eda(df)` | 数据概览（shape、缺失率、统计量） |
+| | | `clean_data(df, strategy)` | 清洗（drop / fill_mean / fill_median） |
+| **2 — 模型** | `phase2_model` | `build_model(type, params)` | 从注册表构建模型规范 |
+| | | 内置模型 | linear_regression / arima / svm |
+| **3 — 求解** | `phase3_solve` | `solve_lr(x, y, alpha)` | 线性回归（最小二乘 + L2正则） |
+| | | `solve_lp(c, A_ub, b_ub, bounds)` | **线性规划**（min c@x, 约束 A_ub@x <= b_ub） |
+| | | `solve_milp(c, integrality, ...)` | **混合整数线性规划**（整数/0-1变量） |
+| | | `solve_scipy_minimize(obj, x0)` | 通用非线性优化（L-BFGS-B / SLSQP） |
+| | | `solve_curve_fit(model, x, y)` | 非线性最小二乘拟合 |
+| | | `solve_odeint(deriv, y0, t)` | ODE 微分方程求解（RK45） |
+| | | `solve_root(func, x0)` | 非线性方程组求根 |
+| | | `solve_ttest(sample1, sample2)` | 两样本 t 检验 |
+| **4 — 验证** | `phase4_validate` | `residual_analysis(residuals)` | 残差诊断（均值、标准差、极值） |
+| | | `compute_aic(n, rss, k)` | AIC 模型选择准则 |
+| | | `compute_bic(n, rss, k)` | BIC 模型选择准则 |
+| | | `kfold_cv(x, y, k)` | K 折交叉验证 |
+| | | `check_state_variables(traj, bounds)` | **状态变量校验**（SOC 含储能系统用） |
+| | | `sensitivity_by_noise(x, y)` | 噪声扰动敏感性分析 |
+| **5 — 可视化** | `phase5_viz` | `plot_residuals(res, path)` | 残差图（散点 + 直方图） |
+| | | `plot_fit(x, y, y_pred, path)` | 拟合图（数据 + 回归线） |
+| **6 — 报告** | `phase6_report` | `build_summary_table(...)` | Markdown 结果汇总表 |
+| | | `build_latex_table(...)` | LaTeX 表格（可直接粘论文） |
+| | | `export_markdown_report(...)` | 完整 Markdown 报告 |
+| | | `export_latex_report(...)` | 完整 LaTeX 报告（可编译） |
+| **模板** | `problem_templates` | `get_template(id)` | 获取 MCM A/B/C/D 模板 |
+| | | `apply_template_to_config(id, cfg)` | 合并模板配置 |
 
 ### config/（全局配置）
 

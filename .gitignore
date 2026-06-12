@@ -5,6 +5,7 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+.pytest_cache/
 
 # IDE
 .vscode/
@@ -32,7 +33,12 @@ problems/*
 !problems/README.md
 logs/*
 !logs/README.md
+output/
 
 # Paper drafts & figures
 paper/figures/
 paper/draft.md
+
+# Transient / project-specific
+_pdf_extracted.txt
+proxy-bug-report.md
